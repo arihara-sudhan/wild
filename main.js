@@ -1,24 +1,19 @@
-// Load environment variables
 require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
-// Initialize the app
 const app = express();
-const PORT = process.env.PORT || 3000; // Fallback to 3000 if PORT is not defined
+const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(bodyParser.json());
 
-// MongoDB connection
 const MONGO_URI = process.env.MONGO_URI;
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Failed to connect to MongoDB', err));
 
-// Animal schema and model
 const animalSchema = new mongoose.Schema({
   name: { type: String, required: true },
   species: { type: String, required: true },
@@ -28,8 +23,6 @@ const animalSchema = new mongoose.Schema({
 
 const Animal = mongoose.model('Animal', animalSchema);
 
-// Routes
-// Create a new animal
 app.post('/animals', async (req, res) => {
   try {
     const animal = new Animal(req.body);
@@ -40,7 +33,6 @@ app.post('/animals', async (req, res) => {
   }
 });
 
-// Get all animals
 app.get('/animals', async (req, res) => {
   try {
     const animals = await Animal.find();
@@ -50,7 +42,6 @@ app.get('/animals', async (req, res) => {
   }
 });
 
-// Get a single animal by ID
 app.get('/animals/:id', async (req, res) => {
   try {
     const animal = await Animal.findById(req.params.id);
@@ -61,7 +52,6 @@ app.get('/animals/:id', async (req, res) => {
   }
 });
 
-// Update an animal by ID
 app.put('/animals/:id', async (req, res) => {
   try {
     const updatedAnimal = await Animal.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
@@ -72,7 +62,6 @@ app.put('/animals/:id', async (req, res) => {
   }
 });
 
-// Delete an animal by ID
 app.delete('/animals/:id', async (req, res) => {
   try {
     const deletedAnimal = await Animal.findByIdAndDelete(req.params.id);
@@ -83,7 +72,6 @@ app.delete('/animals/:id', async (req, res) => {
   }
 });
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
